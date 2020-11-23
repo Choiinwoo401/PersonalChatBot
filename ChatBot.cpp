@@ -2,6 +2,9 @@
 
 using namespace std;
 
+/*
+    activate when scan "cal" and request formula
+    */
 void ChatBot::cal_start() {
     string formula;
     double result;
@@ -19,12 +22,40 @@ void ChatBot::cal_start() {
 		cout << "Answer is " << result << endl;
 		break;
 	}
-
-    cout << "Answer is " << result << endl;
 }
 
 /*
-    open text file and select random line in answer text file 
+    activate when scan "지뢰" and start MineSweeper
+    */
+int ChatBot::mine_start() {
+    class MineSweeper ms;
+
+    while (1) {
+        cout << "1. Start Mine Sweeper" << endl;
+        cout << "2. Exit" << endl;
+
+        int num = 0;
+        cout << ">> ";
+        cin >> num;
+
+        if (num == 1) {
+            cout << "Start Mine Sweeper" << endl;
+            ms.StartMineSweeper();
+            cout << "End Mine Sweeper" << endl;
+        } else if (num == 2) {
+            break;
+        }
+
+        cout << endl;
+    }
+
+    return 0;
+}
+
+/*
+    open text file and select random line in answer text file
+    (now, "this fuction" only print frist line or 'two' lines <- doesnt mean 'second' line)
+    (need to change)
     */
 void ChatBot::answer_phase(string dir) {
     ifstream readFile;
@@ -52,6 +83,7 @@ void ChatBot::answer_phase(string dir) {
 	* -1 : Cannot scan correct word
 	*  0 : Success to Scan for chat
 	*  1 : move to Calculate
+    *  2 : move to MineSweeper
 	*/
 int ChatBot::chat_check(string question) {
     ifstream readFile;
@@ -60,9 +92,12 @@ int ChatBot::chat_check(string question) {
     if(question.find(QUIT) != string::npos) { 
         cout << "Shutting down Program." << endl;
         _exit(0);
-    } else if(question.find("cal") != string::npos) {
+    } else if(question.find(CALCULATOR) != string::npos) {
         cal_start();
         return 1;
+    } else if(question.find(MINE) != string::npos) {
+        mine_start();
+        return 2;
     }
 
     if(readFile.is_open()) {
@@ -82,13 +117,15 @@ int ChatBot::chat_check(string question) {
                     return 0;
                 }
             } while(ss >> word);
-
         }
         readFile.close();
     }
     return -1;
 }
 
+/*
+    start Chat Bot
+    */
 void ChatBot::chat_body() {
     cout << "Welcome." << endl;
     while(1) {
